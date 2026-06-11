@@ -1,0 +1,35 @@
+{
+  "name": "meteor-flow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Automated Meteora DLMM liquidity provider bot (Solana)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "scan": "tsx src/index.ts",
+    "bot": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@meteora-ag/dlmm": "^1.9.0",
+    "@solana/web3.js": "^1.95.0",
+    "axios": "^1.7.0",
+    "better-sqlite3": "^11.3.0",
+    "bn.js": "^5.2.1",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "grammy": "^1.43.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/bn.js": "^5.1.5",
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
