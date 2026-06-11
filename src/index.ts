@@ -23,14 +23,18 @@ import {
 /** Most recent scan, shared with the bot's /top command. */
 const lastScan: { pairs: ScoredPair[]; at: number | null } = { pairs: [], at: null };
 
-/** Run a scan, cache it, print to console, and notify. Single source of truth. */
+/**
+ * Run a scan, cache it, and print to console. Single source of truth.
+ * Delivery (broadcast vs. direct reply) is the caller's choice, so manual
+ * /scan replies once and only the auto-scan timer broadcasts.
+ */
 async function runScan(config: BotConfig): Promise<ScoredPair[]> {
   log.info("Scanning Meteora DLMM pools...");
   const pairs = await scanMarket(config);
   lastScan.pairs = pairs;
   lastScan.at = Date.now();
+  log.info(`Scan complete — ${pairs.length} candidate pool(s).`);
   printTopPairs(pairs);
-  await notifyScanResults(pairs);
   return pairs;
 }
 
@@ -51,9 +55,11 @@ async function runBotMode(config: BotConfig): Promise<void> {
     const ms = config.scanIntervalMinutes * 60_000;
     log.info(`Auto-scan enabled every ${config.scanIntervalMinutes} minute(s).`);
     timer = setInterval(() => {
-      runScan(config).catch((err: unknown) =>
-        notifyError(err instanceof Error ? err.message : String(err)),
-      );
+      runScan(config)
+        .then((pairs) => notifyScanResults(pairs))
+        .catch((err: unknown) =>
+          notifyError(err instanceof Error ? err.message : String(err)),
+        );
     }, ms);
   }
 
